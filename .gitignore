@@ -4,6 +4,7 @@
 *.obj
 *.elf
 
+# I just want test I can use git
 # Precompiled Headers
 *.gch
 *.pch
