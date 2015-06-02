@@ -3,6 +3,7 @@
 *.ko
 *.obj
 *.elf
+*.txt
 
 # I just want test I can use git
 # Precompiled Headers
