@@ -4,39 +4,50 @@
 #include <time.h>       /* time */
 #include <math.h> 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
 #define PI 3.14159265
+typedef std::vector<double> vectype;
+void FindVoxel2Sample(float x, float y, float z, float theta, float phi,vectype * outx,vectype * outy,vectype * outz, float radius);
 
 int main ()
 {
   /* initialize random seed: */
   srand (time(NULL));
-  //random ranges from 0 to 1
-  float random = ((float) rand()) / (float) RAND_MAX;
-  cout<<"Random between 0 and 1:"<<random<<endl;
-  float normvector[3];
-  //assign x, y, z direction value to the normal vector
-  normvector[0] = 3;
-  normvector[1] = 4;
-  normvector[2] = 5;
-  cout<<"normvector x direction:"<<normvector[0]<<"normvector y direction:"\
-  <<normvector[1]<<"normvector z direction:"<<normvector[2]<<endl;
+  size_t size = 10000;
+  vectype  outx(size);
+  vectype  outy(size);
+  vectype  outz(size);
 
-  float singleP[3]; float normvectorangle[2]; float radius; float t; float center[3]; 
-  //assign theta phi value to the normal vector
-  normvectorangle[0] = 0.3; normvectorangle[1] = 0.4;
-  cout<<"normvector phi value:"<<normvectorangle[0]<<"normvector theta value:"<<normvectorangle[1]<<endl;
-
-  double param, result;
-  param = 60.0;
-  result = cos ( param * PI / 180.0 );
-  printf ("The cosine of %f degrees is %f.\n", param, result );
-  singleP[0] = radius * cos(t) * (-sin(phi)) + radius * sin(t) * cos(theta) * cos(phi) +  center[1];
-  singleP[1] = radius * cos(t) * cos(phi) + radius * sin(t) * cos(theta) * sin(phi) +  center[2];
-  singleP[2] = radius * cos(t) * (-sin(phi)) + radius * sin(t) * cos(theta) * cos(phi) +  center[3];
-
-  return 0;
+  float x, y, z;
+  x = 3; y = 4; z = 5;  
+  float phi = 0.8; float theta = 0.6; float radius = 5;
+  FindVoxel2Sample(x, y, z, theta, phi, &outx, &outy, &outz, radius);
+    return 0;
 }
+    void FindVoxel2Sample(float x, float y, float z, float theta, float phi,vectype * outx, vectype * outy, vectype * outz, float radius)
+  {     
+      float rl; float random; float random_r; float t;
+        for (int n=9999; n>0; n--) 
+      {  
+      //random ranges from 0 to 1
+      random = ((float) rand()) / (float) RAND_MAX;
+      random_r = ((float) rand()) / (float) RAND_MAX;
+    //  cout<<"Random between 0 and 1:"<<random<<endl;
+      //assign theta phi value to the normal vector
+       t = 2 * PI * random;  rl = radius * random_r;
+      (*outx)[n] = rl * cos(t) * (-sin(phi)) + rl * sin(t) * cos(theta) * cos(phi) +  x;
+      (*outy)[n] = rl * cos(t) * cos(phi) + rl * sin(t) * cos(theta) * sin(phi) +  y;
+      (*outz)[n] = rl * sin(t) * (-sin(theta)) +  z;
+    /*  cout<<"single point x direction:"<<singleP[0]<<"single point y direction:"\
+      <<singleP[1]<<"single point z direction:"<<singleP[2]<<endl;
+    */ cout<<(*outx)[n]<<" "<<(*outy)[n]<<" "<<(*outz)[n]<<endl;
+      }
+    return;  
+  }
+/*void PressureSampler::FindVoxel2Sample(float x, float y, float z, float th, float phi, vectype * outx, vectype* outy, vectype* outz){
+
+}*/
 
