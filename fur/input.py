@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
-
+import warnings
+warnings.simplefilter("ignore", np.RankWarning)
 i = 1
 x_mouse = []
 y_mouse = []
@@ -196,55 +197,76 @@ cv2.waitKey(0)
 
 
 
-e1 = cv2.getTickCount()
+# e1 = cv2.getTickCount()
 x_fur_long = step*np.array(range(row))
 y_fur_long = np.zeros(row)
-
 for i in range(row):
 	for j in range(col):
 		if t[j][i]==1:
 			y_fur_long[i] = j*step
 			break
+#print y_fur_long	
+x_fur = step*np.array(range(row))
+y_fur = np.zeros(row)
+
+for i in range(row):
+	for j in range(col):
+		if (t[j][i]) ==2:
+			y_fur[i] = j*step
+			break
 	
-	x_fur = step*np.array(range(row))
-	y_fur = np.zeros(row)
+p_1 = np.polyfit(x_fur_long, y_fur_long, poly_times)
+p_2 = np.polyfit(x_fur,y_fur, poly_times)
 
-	for i in range(row):
-		for j in range(col):
-			if (t[j][i]) ==2:
-				y_fur[i] = j*step
-				break
-	
-	p_1 = np.polyfit(x_fur_long, y_fur_long, poly_times)
-	p_2 = np.polyfit(x_fur,y_fur, poly_times)
+#print p_1
 
-	y_fur_long_pred = np.float32(np.zeros(row * step))
-	y_fur_pred = np.float32(np.zeros(row * step))
+y_fur_long_pred = np.float32(np.zeros(row * step))
+y_fur_pred = np.float32(np.zeros(row * step))
 
-	func_1 = np.poly1d(p_1)
-	x_full = np.array(range(row * step))
-	y_fur_long_pred = func_1(x_full)
+func_1 = np.poly1d(p_1)
+x_full = np.array(range(row * step))
+y_fur_long_pred = func_1(x_full)
 
-	func_2 = np.poly1d(p_2)
-	y_fur_pred = func_2(x_full)
+func_2 = np.poly1d(p_2)
+y_fur_pred = func_2(x_full)
 
-	point_draw_fur_long = np.zeros([row * step,2])
-	point_draw_fur = np.zeros([row * step,2])
-	for loop_1 in range(row * step):
-		point_draw_fur_long[loop_1][0] = x_full[loop_1]
-		point_draw_fur_long[loop_1][1] = y_fur_long_pred[loop_1]
-		point_draw_fur[loop_1][0] = x_full[loop_1]
-		point_draw_fur[loop_1][1] = y_fur_pred[loop_1]
-
-	Img_show = img[0 : col_size, 0 : row_size, :]
-	cv2.polylines(Img_show,np.int32([point_draw_fur_long]), 0 , (0,255,0), 5)
-	cv2.polylines(Img_show,np.int32([point_draw_fur]), 0 , (255,0,0), 5)
 
 cv2.namedWindow('final_result', cv2.WINDOW_NORMAL)
-cv2.imshow('final_result', Img_show)
+for loop_1 in range(row*step-2):
+	img = cv2.line(img,(int(x_full[loop_1]),int(y_fur_long_pred[loop_1])),(int(x_full[loop_1+1]),int(y_fur_long_pred[loop_1+1])),(255,56,0),5)
+for loop_1 in range(row*step-2):
+	img = cv2.line(img,(int(x_full[loop_1]),int(y_fur_pred[loop_1])),(int(x_full[loop_1+1]),int(y_fur_pred[loop_1+1])),(25,56,90),5)	
+cv2.imshow('final_result', img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
-e2 = cv2.getTickCount()
-time = (e2 - e1) / cv2.getTickFrequency()
-print time
+
+
+
+
+
+
+
+
+
+#print y_fur_pred
+# 	point_draw_fur_long = np.zeros([row * step,2])
+# 	point_draw_fur = np.zeros([row * step,2])
+# 	for loop_1 in range(row * step):
+# 		point_draw_fur_long[loop_1][0] = x_full[loop_1]
+# 		point_draw_fur_long[loop_1][1] = y_fur_long_pred[loop_1]
+# 		point_draw_fur[loop_1][0] = x_full[loop_1]
+# 		point_draw_fur[loop_1][1] = y_fur_pred[loop_1]
+
+# 	Img_show = img[0 : col_size, 0 : row_size, :]
+# 	cv2.polylines(Img_show,np.int32([point_draw_fur_long]), 0 , (0,255,0), 5)
+# 	cv2.polylines(Img_show,np.int32([point_draw_fur]), 0 , (255,0,0), 5)
+
+# cv2.namedWindow('final_result', cv2.WINDOW_NORMAL)
+# cv2.imshow('final_result', Img_show)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+
+# e2 = cv2.getTickCount()
+# time = (e2 - e1) / cv2.getTickFrequency()
+# print time
